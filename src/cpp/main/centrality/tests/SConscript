@@ -1,0 +1,7 @@
+Import('env','CENTRALITY_OBJ')
+env.Object(Glob('*.cc'))
+
+env.Program('centrality_test', ['centrality_test.cc'] + CENTRALITY_OBJ)
+env.Program('centrality_acceptence_test', ['centrality_acceptence_test.cc'] + CENTRALITY_OBJ)
+env.Program('temporal_centrality_test', ['temporal_centrality_test.cc'] + CENTRALITY_OBJ)
+env.Program('temporal_centrality_for_predictions_test', ['temporal_centrality_for_predictions_test.cc'] + CENTRALITY_OBJ)

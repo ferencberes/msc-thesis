@@ -1,0 +1,45 @@
+# -O3 jobban optimalizal
+# -ggdb ezzel kell forditani, ha gdb-vel akarjuk debuggolni
+# -pg gprof miatt?
+# -g valgrind mint ?
+
+#flags = ['-O3', '-g', '-ggdb', '-Wall']
+flags = [ '-g', '-ggdb', '-Wall']
+
+GTEST = "#../dep/gtest/"
+LOG4CPP = "#../dep/log4cpp"
+LEMON_BIN = '#../dep/lemon_bin/'
+LEMON_SRC = '#../dep/lemon_src/'
+env = Environment(
+        CXX = 'g++',
+        CCFLAGS = flags,
+        CPPPATH=[ '#.', GTEST + 'include/', LOG4CPP + '/include/', LEMON_BIN + 'include/'],
+        LIBPATH=['/usr/local/googlecode/lib', GTEST + 'build/', LOG4CPP + '/lib/', LEMON_BIN + 'lib/'],
+        LIBS=['gtest', 'log4cpp', 'pthread']
+)
+
+testCompile = ARGUMENTS.get('test', False)
+
+# building object dependencies
+SConscript(['main/centrality/utils/SConscript'], exports = ['env'])
+CENTRALITY_OBJ = Glob('#/../bin/main/centrality/utils/*.o')
+
+SConscript(['main/centrality/graphs/SConscript'], exports = ['env','CENTRALITY_OBJ'])
+CENTRALITY_OBJ += Glob('#/../bin/main/centrality/graphs/*.o')
+
+SConscript(['main/centrality/writers/SConscript'], exports = ['env','CENTRALITY_OBJ'])
+CENTRALITY_OBJ += Glob('#/../bin/main/centrality/writers/*.o')
+
+SConscript(['main/centrality/simulators/SConscript'], exports = ['env','CENTRALITY_OBJ'])
+CENTRALITY_OBJ += Glob('#/../bin/main/centrality/simulators/*.o')
+
+# building executable files
+SConscript(['main/centrality/tests/SConscript'], exports = ['env','CENTRALITY_OBJ'])
+
+# building tests if requested
+if testCompile: 
+  SConscript([
+    'test/centrality/SConscript',
+    ],
+    exports = ['env', 'CENTRALITY_OBJ'])
+

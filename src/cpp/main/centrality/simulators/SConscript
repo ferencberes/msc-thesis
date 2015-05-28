@@ -1,0 +1,2 @@
+Import('env','CENTRALITY_OBJ')
+env.Object(Glob('*.cpp'))

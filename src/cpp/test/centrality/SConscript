@@ -1,0 +1,8 @@
+Import('env', 'CENTRALITY_OBJ')
+
+env.Program('temporal_centrality_test', ['temporal_centrality_test.cpp'] + CENTRALITY_OBJ)
+env.Program('temporal_centrality_test_with_deletion', ['temporal_centrality_test_with_deletion.cpp'] + CENTRALITY_OBJ)
+env.Program('temporal_edge_weights_test', ['temporal_edge_weights_test.cpp'] + CENTRALITY_OBJ)
+
+# this test is excluded beacause there is a strange error ... this static part of the code is node used
+#env.Program('static_centrality_test', ['static_centrality_test.cpp'] + CENTRALITY_OBJ)
