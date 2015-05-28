@@ -1,0 +1,24 @@
+msc-thesis
+================
+
+Repository for my applied mathematician master thesis
+
+# Requirements
+
+  * g++ (Ubuntu 4.8.2-19ubuntu1) 4.8.2 version or higher
+  * cmake version 3.0.2 or higher
+  * python simplejson module
+
+# Dependencies
+```batch
+./manage/install.sh
+```
+
+After installing dependencies the C++ source code must be compiled and tested.
+
+# Compile and run gtests
+
+```batch
+./manage/compile_and_test_all.sh
+```
+
