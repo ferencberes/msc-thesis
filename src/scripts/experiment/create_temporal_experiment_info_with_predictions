@@ -1,0 +1,55 @@
+this_dir="$(dirname "$0")"
+
+pushd "$this_dir"
+
+git diff --exit-code || (echo "ERROR: there is noncommitted thing is in this git repo"; exit 1)
+sha=$(git log -1 --pretty=format:%H)
+
+popd
+
+mkdir -p "$info_tmp_dir"
+
+cat > "$info_tmp_dir"/info <<EOF
+###Environment parameters###
+date=$date
+sha=$sha
+HOST=$(hostname)
+HOSTTYPE=$HOSTTYPE
+USER=$USER
+\$0=$0
+\$*=$*
+pwd=$(pwd)
+
+###Job parameters###
+input_file=$1
+output_dir=$2
+preproc_edge_pred_folder=$3
+EOF
+
+if [ "$#" -ge "12" ]; then
+cat >> "$info_tmp_dir"/info <<EOF
+predicted_edges_in_interval=$4
+start_time=$5
+delta=$6
+centrality_prev_interval_count=$7
+combine_factor=$8
+graph_stat_prev_interval_count=$9
+enable_multi_edges=${10}
+max_num_of_steps=${11}
+topK=${12}
+
+EOF
+fi
+
+if [ "$#" -ge "13" ]; then
+echo "###Measures###" >> "$info_tmp_dir"/info
+
+i=1
+for param in "$@"; do
+  if [ "$i" -ge "13" ]; then
+    echo "$param" >> "$info_tmp_dir"/info
+  fi
+  ((i = i + 1))
+done
+fi
+
