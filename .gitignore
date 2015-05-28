@@ -1,0 +1,6 @@
+data
+*.swp
+*.pyc
+src/bin
+src/dep
+*~
