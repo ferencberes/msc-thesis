@@ -1,0 +1,172 @@
+{
+  "repo_dir": "/home/fberes/sztaki/git/temporalNodeRanking",
+  "inputs": [
+    {
+      "name":"oc_lgf",
+      "type":"lgf",
+      "path":"/home/fberes/sztaki/git/temporalNodeRanking/data/filtered_timeline_data/mention_timeline_oc.lgf"
+    },
+    {
+      "name":"15_lgf",
+      "type":"lgf",
+      "path":"/home/fberes/sztaki/git/temporalNodeRanking/data/filtered_timeline_data/mention_timeline_15.lgf"
+    },
+    {
+      "name":"20_lgf",
+      "type":"lgf",
+      "path":"/home/fberes/sztaki/git/temporalNodeRanking/data/filtered_timeline_data/mention_timeline_20.lgf"
+    },
+    {
+      "name":"yo_lgf",
+      "type":"lgf",
+      "path":"/home/fberes/sztaki/git/temporalNodeRanking/data/filtered_timeline_data/mention_timeline_yo.lgf"
+    },
+    {
+      "name":"mh_lgf",
+      "type":"lgf",
+      "path":"/home/fberes/sztaki/git/temporalNodeRanking/data/filtered_timeline_data/mention_timeline_mh.lgf"
+    }
+  ],
+  "tasks": [
+    {
+      "name": "original_oc",
+      "path": "/home/fberes/sztaki/git/temporalNodeRanking/my_experiments/original_datasets/oc",
+      "decription": "original oc lemon output"
+    },
+    {
+      "name": "original_15",
+      "path": "/home/fberes/sztaki/git/temporalNodeRanking/my_experiments/original_datasets/15",
+      "decription": "original 15 lemon output"
+    },
+    {
+      "name": "original_20",
+      "path": "/home/fberes/sztaki/git/temporalNodeRanking/my_experiments/original_datasets/20",
+      "decription": "original 20 lemon output"
+    },
+    {
+      "name": "original_mh",
+      "path": "/home/fberes/sztaki/git/temporalNodeRanking/my_experiments/original_datasets/mh",
+      "decription": "original mh lemon output"
+    },
+    {
+      "name": "original_yo",
+      "path": "/home/fberes/sztaki/git/temporalNodeRanking/my_experiments/original_datasets/yo",
+      "decription": "original yo lemon output"
+    }
+  ],
+  "lemon_jobs": [
+    {
+      "name": "oc_lemon",
+      "type": "original_centrality",
+      "task": "original_oc",
+      "input":"oc_lgf",
+      "start_time": 1318244928,
+      "delta": 86400,
+      "centrality_prev_interval_count": 0,
+      "graph_stat_prev_interval_count": 4,
+      "enable_multi_edges": false,
+      "max_num_of_steps": 22,
+      "top_k": 10,
+      "measures": [
+        "pr",
+        "degree",
+        "salsa",
+        "beta"
+      ]
+    },
+    {
+      "name": "15_lemon",
+      "type": "original_centrality",
+      "task": "original_15",
+      "input":"15_lgf",
+      "start_time": 1318244928,
+      "delta": 86400,
+      "centrality_prev_interval_count": 0,
+      "graph_stat_prev_interval_count": 4,
+      "enable_multi_edges": false,
+      "max_num_of_steps": 22,
+      "top_k": 10,
+      "measures": [
+        "pr",
+        "degree",
+        "salsa",
+        "beta"
+      ]
+    },
+    {
+      "name": "20_lemon",
+      "type": "original_centrality",
+      "task": "original_20",
+      "input":"20_lgf",
+      "start_time": 1320073445,
+      "delta": 86400,
+      "centrality_prev_interval_count": 0,
+      "graph_stat_prev_interval_count": 4,
+      "enable_multi_edges": false,
+      "max_num_of_steps": 25,
+      "top_k": 10,
+      "measures": [
+        "pr",
+        "degree",
+        "salsa",
+        "beta"
+      ]
+    },
+    {
+      "name": "mh_lemon",
+      "type": "original_centrality",
+      "task": "original_mh",
+      "input":"mh_lgf",
+      "start_time": 1405617888,
+      "delta": 86400,
+      "centrality_prev_interval_count": 0,
+      "graph_stat_prev_interval_count": 4,
+      "enable_multi_edges": false,
+      "max_num_of_steps": 12,
+      "top_k": 10,
+      "measures": [
+        "pr",
+        "degree",
+        "salsa",
+        "beta"
+      ]
+    },
+    {
+      "name": "yo_lemon",
+      "type": "original_centrality",
+      "task": "original_yo",
+      "input":"yo_lgf",
+      "start_time": 1337337054,
+      "delta": 604800,
+      "centrality_prev_interval_count": 0,
+      "graph_stat_prev_interval_count": 4,
+      "enable_multi_edges": false,
+      "max_num_of_steps": 33,
+      "top_k": 10,
+      "measures": [
+        "pr",
+        "degree",
+        "salsa",
+        "beta"
+      ]
+    }
+  ],
+  "visualization_jobs": [
+    {
+      "name": "graph_stat_plotting",
+      "type":"html_tables",
+      "tasks":["original_oc","original_15","original_20","original_mh","original_yo"]
+    },
+    {
+      "name": "graph_stat_plotting",
+      "type":"graph_stat",
+      "tasks":["original_oc","original_15","original_20","original_mh","original_yo"]
+    },
+    {
+      "name":"prev_interval_plotting",
+      "type":"prev_interval",
+      "metrics":["ndcg","precision"],
+      "tasks":["original_oc","original_15","original_20","original_mh","original_yo"]
+    }
+  ]
+}

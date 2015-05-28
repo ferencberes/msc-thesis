@@ -1,0 +1,118 @@
+{
+  "repo_dir": "/home/fberes/sztaki/git/temporalNodeRanking",
+  "inputs": [
+    {
+      "name":"oc_lgf",
+      "type":"lgf",
+      "path":"/home/fberes/sztaki/git/temporalNodeRanking/data/filtered_timeline_data/mention_timeline_oc.lgf"
+    },
+    {
+      "name":"toplist_10000",
+      "type":"toplist",
+      "path":"/home/fberes/sztaki/git/temporalNodeRanking/my_experiments/sample_prediction_tests/toplist_10000"
+    }
+  ],
+  "tasks": [
+    {
+      "name": "original_oc",
+      "path":"/home/fberes/sztaki/git/temporalNodeRanking/my_experiments/sample_prediction_tests/oc",
+      "decription": "original oc lemon output"
+    },
+    {
+      "name": "num_10000",
+      "path":"/home/fberes/sztaki/git/temporalNodeRanking/my_experiments/sample_prediction_tests/10000",
+      "decription": "tests with 10000 predicted edges"
+    },
+    {
+      "name": "num_10000_with_lookback",
+      "path":"/home/fberes/sztaki/git/temporalNodeRanking/my_experiments/sample_prediction_tests/10000_w_lookback",
+      "decription": "tests with 10000 predicted edges and lookback"
+    }
+  ],
+  "preprocess_jobs": [
+    {
+      "name": "toplist_10000_to_lgf",
+      "type": "toplist_to_lgf",
+      "task": "num_10000",
+      "original_task": "original_oc",
+      "input": "toplist_10000"
+    },
+    {
+      "name": "toplist_10000_to_edgelist",
+      "type": "toplist_to_edgelist",
+      "task": "num_10000_with_lookback",
+      "input": "toplist_10000"
+    }
+  ],
+  "lemon_jobs": [
+    {
+      "name": "centrality_for_10000",
+      "type": "predicted_centrality",
+      "task": "num_10000",
+      "preprocess": "toplist_10000_to_lgf",
+      "start_time": 1318244928,
+      "delta": 86400,
+      "centrality_prev_interval_count": 0,
+      "graph_stat_prev_interval_count": 4,
+      "enable_multi_edges": false,
+      "max_num_of_steps": 21,
+      "top_k": 10,
+      "measures": [
+        "pr",
+        "degree",
+        "salsa",
+        "beta"
+      ]
+    },
+    {
+      "name": "centrality_for_10000_w_lookback",
+      "type": "predicted_centrality_with_lookback",
+      "task": "num_10000_with_lookback",
+      "input": "oc_lgf",
+      "preprocess": "toplist_10000_to_edgelist",
+      "num_of_predicted_edges":10000,
+      "start_time": 1318244928,
+      "delta": 86400,
+      "centrality_prev_interval_count": 2,
+      "graph_stat_prev_interval_count": 4,
+      "enable_multi_edges": false,
+      "max_num_of_steps": 21,
+      "top_k": 10,
+      "measures": [
+        "pr",
+        "degree",
+        "salsa",
+        "beta"
+      ]
+    }
+  ],
+  "visualization_jobs": [
+    {
+      "name": "graph_stat_plotting",
+      "type":"graph_stat",
+      "tasks":["num_10000","num_10000_with_lookback"]
+    },
+    {
+      "name":"prev_interval_plotting",
+      "type":"prev_interval",
+      "metrics":["ndcg","precision"],
+      "tasks":["num_10000","num_10000_with_lookback"]
+    },
+    {
+      "name":"lr_centr_eval",
+      "type":"centrality_eval",
+      "output_folder":"/home/fberes/sztaki/git/temporalNodeRanking/my_experiments/sample_prediction_tests/compare_plots/centrality",
+      "metrics":["ndcg","precision"],
+      "original_task":"original_oc",
+      "tasks":["num_10000","num_10000_with_lookback"]
+    },
+    {
+      "name":"lr_link_pred_eval",
+      "type":"link_prediction_eval",
+      "output_folder":"/home/fberes/sztaki/git/temporalNodeRanking/my_experiments/sample_prediction_tests/compare_plots/link_pred",
+      "metrics":["ndcg","precision"],
+      "original_task":"original_oc",
+      "inputs":["toplist_10000"]
+    }
+  ]
+}
