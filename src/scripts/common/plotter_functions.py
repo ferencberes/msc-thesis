@@ -27,7 +27,7 @@ def set_y_axis_config(axis_obj, y_axis_label, y_limit, y_sticks_rate, y_grid_ena
 		epsilon = 0.01
 		y_lower = 0.0
 		y_upper = y_limit
-        	plt.ylim(y_lower, y_upper + epsilon)
+	       	plt.ylim(y_lower, y_upper + epsilon)
 		y_delta =  float(y_upper - y_lower) / y_sticks_rate
 		axis_obj.yaxis.set_ticks(np.arange(y_lower, y_upper + y_delta, y_delta))
 	if y_grid_enabled:

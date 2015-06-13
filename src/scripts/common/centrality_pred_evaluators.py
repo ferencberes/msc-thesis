@@ -2,8 +2,10 @@ import json
 import ranking_metrics as rm
 import ranker_objects as ros
 import custom_errors as ces
+import parse_json_output as pjo
 
-def extractVariable(toplists, json_data):
+def extractToplistAndVariables(json_data):
+	toplists = pjo.extractToplistsFromJson(json_data)
 	measure_name_list = toplists[0]
 	measure_toplists = toplists[1]
 	num_of_intervals = len(json_data["centrality_test"]["intervals"])
@@ -11,19 +13,19 @@ def extractVariable(toplists, json_data):
 	return [measure_name_list, measure_toplists, num_of_intervals, top_k]
 
 # Centrality evalutator functions
-def ndcgPredFromLastIntervalForCentrality(orig_toplists, orig_json_data, version):
+def ndcgPredFromLastIntervalForCentrality(orig_json_data, version):
 	params = [version]
-	return predFromLastIntervalForCentrality(orig_toplists, orig_json_data, 'ndcg', params)
+	return predFromLastIntervalForCentrality(orig_json_data, 'ndcg', params)
 
-def nrbmPredFromLastIntervalForCentrality(orig_toplists, orig_json_data, persistance):
+def nrbmPredFromLastIntervalForCentrality(orig_json_data, persistance):
 	params = [persistance]
-	return predFromLastIntervalForCentrality(orig_toplists, orig_json_data, 'nrbm', params)
+	return predFromLastIntervalForCentrality(orig_json_data, 'nrbm', params)
 
-def precisionPredFromLastIntervalForCentrality(orig_toplists, orig_json_data):
-	return predFromLastIntervalForCentrality(orig_toplists, orig_json_data, 'precision', [])
+def precisionPredFromLastIntervalForCentrality(orig_json_data):
+	return predFromLastIntervalForCentrality(orig_json_data, 'precision', [])
 
-def predFromLastIntervalForCentrality(orig_toplists, orig_json_data, metric_name, params):
-	[measure_name_list, orig_measure_toplists, orig_num_of_intervals, orig_top_k] = extractVariable(orig_toplists, orig_json_data)
+def predFromLastIntervalForCentrality(orig_json_data, metric_name, params):
+	[measure_name_list, orig_measure_toplists, orig_num_of_intervals, orig_top_k] = extractToplistAndVariables(orig_json_data)
 	c_ranker = ros.CentralityRanker()
 	computed_metric_map = {}
 	try:
@@ -34,7 +36,9 @@ def predFromLastIntervalForCentrality(orig_toplists, orig_json_data, metric_name
 		for m_name in measure_name_list:
 			for i in range(1, orig_num_of_intervals):
 				original = orig_measure_toplists[m_name][i]
-				prediction = orig_measure_toplists[m_name][i-1]
+				prediction = []
+				for item in orig_measure_toplists[m_name][i-1]:
+					prediction.append(item[0])
 				if not isinstance(params,list):
 					raise TypeError('params variable must be a list!')
 				if metric_name == 'ndcg':
@@ -49,6 +53,7 @@ def predFromLastIntervalForCentrality(orig_toplists, orig_json_data, metric_name
 					else:
 						persistance = params[0]
 						computed_metric_map[m_name].append(rm.computeNRBM(c_ranker, original, prediction, persistance))
+
 				elif metric_name == 'precision':
 					computed_metric_map[m_name].append(rm.computePrecision(c_ranker, original, prediction))
 				else:
@@ -60,22 +65,23 @@ def predFromLastIntervalForCentrality(orig_toplists, orig_json_data, metric_name
 	except IndexError as ie:
 		print ie.msg
 	finally:
+		#print computed_metric_map
 		return [orig_num_of_intervals,computed_metric_map]
 
-def ndcgPredForCentrality(orig_toplists, pred_toplists, orig_json_data, pred_json_data, version):
+def ndcgPredForCentrality(orig_json_data, pred_json_data, version):
 	params = [version]
-	return predForCentrality(orig_toplists, pred_toplists, orig_json_data, pred_json_data, 'ndcg', params)
+	return predForCentrality(orig_json_data, pred_json_data, 'ndcg', params)
 
-def nrbmPredForCentrality(orig_toplists, pred_toplists, orig_json_data, pred_json_data, persistance):
+def nrbmPredForCentrality(orig_json_data, pred_json_data, persistance):
 	params = [persistance]
-	return predForCentrality(orig_toplists, pred_toplists, orig_json_data, pred_json_data, 'nrbm', params)
+	return predForCentrality(orig_json_data, pred_json_data, 'nrbm', params)
 
-def precisionPredForCentrality(orig_toplists, pred_toplists, orig_json_data, pred_json_data):
-	return predForCentrality(orig_toplists, pred_toplists, orig_json_data, pred_json_data, 'precision', [])
+def precisionPredForCentrality(orig_json_data, pred_json_data):
+	return predForCentrality(orig_json_data, pred_json_data, 'precision', [])
 
-def predForCentrality(orig_toplists, pred_toplists, orig_json_data, pred_json_data, metric_name, params):
-	[measure_name_list, orig_measure_toplists, orig_num_of_intervals, orig_top_k] = extractVariable(orig_toplists, orig_json_data)
-	[pred_measure_name_list, pred_measure_toplists, pred_num_of_intervals, pred_top_k] = extractVariable(pred_toplists, pred_json_data)
+def predForCentrality(orig_json_data, pred_json_data, metric_name, params):
+	[measure_name_list, orig_measure_toplists, orig_num_of_intervals, orig_top_k] = extractToplistAndVariables(orig_json_data)
+	[pred_measure_name_list, pred_measure_toplists, pred_num_of_intervals, pred_top_k] = extractToplistAndVariables(pred_json_data)
 	c_ranker = ros.CentralityRanker()
 	computed_metric_map = {}
 	try:
@@ -91,7 +97,9 @@ def predForCentrality(orig_toplists, pred_toplists, orig_json_data, pred_json_da
 		for m_name in measure_name_list:
 			for i in range(1, orig_num_of_intervals):
 				original = orig_measure_toplists[m_name][i]
-				prediction = pred_measure_toplists[m_name][i]
+				prediction = []
+				for item in pred_measure_toplists[m_name][i]:
+					prediction.append(item[0])
 				if not isinstance(params,list):
 					raise TypeError('params variable must be a list!')
 				if metric_name == 'ndcg':
@@ -121,6 +129,7 @@ def predForCentrality(orig_toplists, pred_toplists, orig_json_data, pred_json_da
 	except IndexError as ie:
 		print ie.msg
 	finally:
+		#print computed_metric_map
 		return [orig_num_of_intervals,computed_metric_map]
 
 

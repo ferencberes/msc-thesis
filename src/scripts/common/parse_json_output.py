@@ -10,7 +10,7 @@ def getMeasureNames(json_data):
 def getTopListOfInterval(measure_name_tag):
 	toplist=[]
 	for record in measure_name_tag:
-		toplist.append(record["id"])
+		toplist.append([record["id"], record["value"]]) # CentralityRanker needs the computed centrality scores
 	return toplist
 
 def loadMeasureRankings(measure_name_list, orig_json_data):

@@ -18,13 +18,12 @@ def convertMapToList(data_map):
 
 def evalPredictionBasedOnLastInterval(json_data, plot_dir, metric_name):
 	try:
-		extracted_top_lists = pjo.extractToplistsFromJson(json_data)
 		if metric_name == 'ndcg':
-			computed_metric = cpe.ndcgPredFromLastIntervalForCentrality(extracted_top_lists, json_data, dcg_type)
+			computed_metric = cpe.ndcgPredFromLastIntervalForCentrality(json_data, dcg_type)
 		elif metric_name == 'nrbm':
-			computed_metric = cpe.nrbmPredFromLastIntervalForCentrality(extracted_top_lists, json_data, rbm_persistence)
+			computed_metric = cpe.nrbmPredFromLastIntervalForCentrality(json_data, rbm_persistence)
 		elif metric_name == 'precision':	
-			computed_metric = cpe.precisionPredFromLastIntervalForCentrality(extracted_top_lists, json_data)
+			computed_metric = cpe.precisionPredFromLastIntervalForCentrality(json_data)
 		else:
 			raise ces.MetricNameError(metric_name)
 		res_metric = computed_metric[1]
@@ -38,13 +37,12 @@ def evalPrediction(prediction_order, json_data_map, plot_dir, metric_name):
 	try:
 		orig_json_data = json_data_map['previous_pred']
 		orig_interval_num = len(orig_json_data["centrality_test"]["intervals"])
-		orig_extracted_top_lists = pjo.extractToplistsFromJson(json_data_map['previous_pred'])
 		if metric_name == 'ndcg':
-			computed_prev = cpe.ndcgPredFromLastIntervalForCentrality(orig_extracted_top_lists, orig_json_data, dcg_type)
+			computed_prev = cpe.ndcgPredFromLastIntervalForCentrality(orig_json_data, dcg_type)
 		elif metric_name == 'nrbm':
-			computed_prev = cpe.nrbmPredFromLastIntervalForCentrality(orig_extracted_top_lists, orig_json_data, rbm_persistence)
+			computed_prev = cpe.nrbmPredFromLastIntervalForCentrality(orig_json_data, rbm_persistence)
 		elif metric_name == 'precision':
-			computed_prev = cpe.precisionPredFromLastIntervalForCentrality(orig_extracted_top_lists,orig_json_data)
+			computed_prev = cpe.precisionPredFromLastIntervalForCentrality(orig_json_data)
 		else:
 			raise ces.MetricNameError(metric_name)
 	
@@ -58,13 +56,12 @@ def evalPrediction(prediction_order, json_data_map, plot_dir, metric_name):
 				if orig_interval_num != pred_interval_num:
 					raise ces. IntervalCountError(orig_interval_num, pred_interval_num, prediction)				
 
-				pred_extracted_top_lists = pjo.extractToplistsFromJson(pred_json_data)
 				if metric_name == 'ndcg':
-					computed_metric = cpe.ndcgPredForCentrality(orig_extracted_top_lists, pred_extracted_top_lists, orig_json_data, pred_json_data, dcg_type)
+					computed_metric = cpe.ndcgPredForCentrality(orig_json_data, pred_json_data, dcg_type)
 				elif metric_name == 'nrbm':
-					computed_metric = cpe.nrbmPredForCentrality(orig_extracted_top_lists, pred_extracted_top_lists, orig_json_data, pred_json_data, rbm_persistence)
+					computed_metric = cpe.nrbmPredForCentrality(orig_json_data, pred_json_data, rbm_persistence)
 				elif metric_name == 'precision':
-					computed_metric = cpe.precisionPredForCentrality(orig_extracted_top_lists, pred_extracted_top_lists, orig_json_data, pred_json_data)
+					computed_metric = cpe.precisionPredForCentrality(orig_json_data, pred_json_data)
 				else:
 					raise ces.MetricNameError(metric_name)
 				res_metric = computed_metric[1]

@@ -27,6 +27,7 @@ void RecsysEdgeWriter::writeEdgesOfGlobalTimeQueue(
 	_outputFile.open(outputFileName.c_str(), ios::out);
 
 	GlobalEdgeTimeQueue queue_copy(partial_queue);
+	queue_copy.empty();
 
 	while (!queue_copy.empty()) {
 		recsys_record rec = queue_copy.top();
@@ -51,6 +52,7 @@ void RecsysEdgeWriter::writeEdgesOfCurrentInterval(MultiEdgeCounter &current,
 
 	// edges will be printed to output in mention-time order
 	ordered_edges_list ordered_edges;
+	ordered_edges.empty();
 
 	for (ListDigraph::NodeIt n(_graph); n != INVALID; ++n) {
 		for (counter_map_iterator it = current[n].begin();
@@ -102,6 +104,7 @@ void RecsysEdgeWriter::writeHomophilyEdgesOfCurrentInterval(
 
 	// edges will be printed to output in mention-time order
 	ordered_edges_list ordered_edges;
+	ordered_edges.empty();
 
 	for (ListDigraph::NodeIt n(_graph); n != INVALID; ++n) {
 		for (counter_map_iterator it = current[n].begin();

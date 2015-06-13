@@ -1,11 +1,10 @@
-#!/usr/bin/python
-
 import math
 import ranker_objects as ros
 
 metric_list=['ndcg','nrbm','precision']
 
-def computeIdealDCG(ranker_obj, k, version):
+def computeIdealDCG(ranker_obj, original, k, version):
+	ranker_obj.setOriginal(original)
 	sum = 0.0
 	if issubclass(ranker_obj.__class__, ros.ObjectRanker):
 		for i in range(0,k):
@@ -15,9 +14,11 @@ def computeIdealDCG(ranker_obj, k, version):
 				sum += ( (math.pow(2, ranker_obj.getRelevanceForPosition(i+1))-1) / math.log(i+2,2) )
 	else:
 		raise TypeError('ranker_obj must be a subclass of ObjectRanker')
+	#print sum
 	return sum
 
-def computeIdealRBM(ranker_obj, k, persistance):
+def computeIdealRBM(ranker_obj, original, k, persistance):
+	ranker_obj.setOriginal(original)
 	sum = 0.0
 	if issubclass(ranker_obj.__class__, ros.ObjectRanker):
 		for i in range(0,k):
@@ -38,6 +39,7 @@ def computeRankingDCG(ranker_obj, original, predicted, version):
 				sum += ( (math.pow(2, ranker_obj.getRelevance(item))-1) / math.log(i+2,2) )
 	else:
 		raise TypeError('ranker_obj must be a subclass of ObjectRanker')
+	#print sum
 	return sum
 
 def computeRankingRBM(ranker_obj, original, predicted, persistance):
@@ -62,7 +64,9 @@ def computePrecision(ranker_obj, original, predicted):
 	if len(predicted) == 0 :
 		return  0.0
 	else:
-		return sum / len(predicted)
+		res = sum / len(predicted)
+		#print res
+		return res
 
 def computeRecall(ranker_obj, original, predicted):
 	ranker_obj.setOriginal(original)
@@ -75,52 +79,19 @@ def computeRecall(ranker_obj, original, predicted):
 	if len(original) == 0 :
 		return  0.0
 	else:
-		return sum / len(original)
+		return sum / ranker_obj.getNumOfOriginalItems()
 
 def computeNDCG(ranker_obj, original, predicted, version):
 	if len(predicted) == 0:
 		return 0.0
 	else:
-		return computeRankingDCG(ranker_obj, original, predicted, version) / computeIdealDCG(ranker_obj, len(predicted), version)
+		res = computeRankingDCG(ranker_obj, original, predicted, version) / computeIdealDCG(ranker_obj, original, len(predicted), version)
+		return res	
 
 def computeNRBM(ranker_obj, original, predicted, persistance):
 	if len(predicted) == 0:
 		return 0.0
 	else:
-		return computeRankingRBM(ranker_obj, original, predicted, persistance) / computeIdealRBM(ranker_obj, len(predicted), persistance)
+		res = computeRankingRBM(ranker_obj, original, predicted, persistance) / computeIdealRBM(ranker_obj, original, len(predicted), persistance)
+		return res
 
-if __name__ == '__main__':
-	print "Starting tests..."	
-
-	original=['alma','korte','barack','szilva']
-	predicted=['alma','szilva','barack','eper','meggy']
-	predicted_1=['dinnye','szilva','barack','eper','meggy']
-	predicted_2=['dinnye','szilva','barack','alma','meggy']
-
-	c_ranker = ros.CentralityRanker()
-
-	print computeNDCG(c_ranker,original,original,4,1)
-	print computeNDCG(c_ranker,original,original,4,2)
-	print computeNRBM(c_ranker,original,original,4,0.85)
-	print computePrecision(c_ranker,original,original)
-	print computeRecall(c_ranker,original,original)
-	print
-	print computeNDCG(c_ranker,original,predicted,4,1)
-	print computeNDCG(c_ranker,original,predicted,4,2)
-	print computeNRBM(c_ranker,original,predicted,4,0.85)
-	print computePrecision(c_ranker,original,predicted)
-	print computeRecall(c_ranker,original,predicted)
-	print	
-	print computeNDCG(c_ranker,original,predicted_1,4,1)
-	print computeNDCG(c_ranker,original,predicted_1,4,2)
-	print computeNRBM(c_ranker,original,predicted_1,4,0.85)
-	print computePrecision(c_ranker,original,predicted_1)
-	print computeRecall(c_ranker,original,predicted_1)
-	print
-	print computeNDCG(c_ranker,original,predicted_2,4,1)
-	print computeNDCG(c_ranker,original,predicted_2,4,2)
-	print computeNRBM(c_ranker,original,predicted_2,4,0.85)
-	print computePrecision(c_ranker,original,predicted_2)
-	print computeRecall(c_ranker,original,predicted_2)
-	print
-	print "Tests are finished."	

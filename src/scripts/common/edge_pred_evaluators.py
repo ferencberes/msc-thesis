@@ -22,6 +22,7 @@ def predForEdges(num_of_intervals, orig_edges, predicted_edges, metric_name, par
 		computed_metric_list.append(0) # there is no first prediction
 		# TODO: check whether interval length equals!!!
 		for i in range(1, num_of_intervals):
+			#print i
 			original = orig_edges[i] # this is a map
 			prediction = predicted_edges[i] # this is a list
 			if not isinstance(params,list):
@@ -53,6 +54,7 @@ def predForEdges(num_of_intervals, orig_edges, predicted_edges, metric_name, par
 	except IndexError as ie:
 		print ie.msg
 	finally:
+		#print computed_metric_list
 		return computed_metric_list
 
 
