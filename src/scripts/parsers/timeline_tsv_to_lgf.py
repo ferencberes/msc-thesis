@@ -55,6 +55,3 @@ if __name__=="__main__":
 		parseTsvToLgf(identity, sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5])
 	else:
 		print 'Usage: <tsv_file_path> <lgf_file_path> <source_index_in_tsv> <target_index_in_tsv> <time_index_in_tsv>'
-		print 'HINT:'
-		print 'For Robi\' first movement: <tsv_file_path> <lgf_file_path> 1 2 0'
-		print 'For Robi\'s postfix movement: <tsv_file_path> <lgf_file_path> 1 2 0'
