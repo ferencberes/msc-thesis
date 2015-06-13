@@ -1,4 +1,4 @@
-import re,sys
+import sys
 
 tsv_file = open(sys.argv[1], 'r' )
 
