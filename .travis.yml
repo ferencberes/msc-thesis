@@ -1,0 +1,6 @@
+language: cpp 
+
+install: ./manage/install.sh
+
+script: ./manage/compile_and_test_all.sh
+
